@@ -1,0 +1,75 @@
+{
+  "name": "react-help-overlay",
+  "version": "0.1.0",
+  "description": "A headless library for building interactive help and tutorials into your React app.",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "module": "dist/index.mjs",
+  "scripts": {
+    "build": "npm run ts-validate && tsup && npm run ts-emit",
+    "lint": "npx eslint . -c eslint.config.mjs",
+    "ts-emit": "tsc --project tsconfig.dts.json",
+    "ts-validate": "tsc --project tsconfig.lib.json --noEmit",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BlueLdr/react-help-overlay.git"
+  },
+  "keywords": [
+    "react",
+    "help",
+    "tutorial",
+    "headless"
+  ],
+  "author": {
+    "name": "Eric Gottlieb",
+    "email": "blueldr.eg@gmail.com",
+    "url": "https://github.com/BlueLdr/"
+  },
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/BlueLdr/react-help-overlay/issues"
+  },
+  "homepage": "https://github.com/BlueLdr/react-help-overlay#readme",
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "devDependencies": {
+    "@eslint/compat": "^1.3.2",
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.33.0",
+    "@types/node": "^24.2.1",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@typescript-eslint/eslint-plugin": "^8.39.1",
+    "@typescript-eslint/parser": "^8.39.1",
+    "eslint": "^9.33.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.5",
+    "prettier": "^3.6.2",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "terser": "^5.43.1",
+    "tslib": "^2.8.1",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.39.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "lint-staged": {
+    "**/src/**/*.{js,jsx,ts,tsx,css,scss,md,json,yaml,yml}": [
+      "prettier --write"
+    ]
+  }
+}
