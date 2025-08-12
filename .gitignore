@@ -1,0 +1,14 @@
+# deps
+/node_modules
+
+# build
+/dist
+*.tsbuildinfo
+
+# misc
+.DS_Store
+
+# env
+.env
+**/.env
+
