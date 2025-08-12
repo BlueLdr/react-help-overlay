@@ -1,16 +1,14 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Validate
+name: Build
 
 on:
   push:
     branches: ["main"]
-  pull_request:
-    branches: ["main"]
 
 jobs:
-  validate:
+  build:
     runs-on: ubuntu-latest
 
     strategy:
@@ -26,5 +24,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       - run: npm ci
-      - run: npm run lint
-      - run: npm run ts-validate
+      - run: npm run build
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: dist
+          path: ./dist
+          if-no-files-found: error
+          overwrite: true
