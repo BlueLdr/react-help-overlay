@@ -126,11 +126,16 @@ export const overridesCompat = new FlatCompat({
   recommendedConfig: typescriptEslint.configs.recommendedTypeChecked,
 });
 
-export default typescriptEslint.config(
-  baseConfig,
-  tslintConfig,
-  eslintConfigPrettier,
-  overridesCompat.config(importConfig),
-  reactConfig,
-  a11yConfig,
-);
+export default typescriptEslint
+  .config(
+    baseConfig,
+    tslintConfig,
+    eslintConfigPrettier,
+    overridesCompat.config(importConfig),
+    reactConfig,
+    a11yConfig
+  )
+  .map(config => ({
+    ...config,
+    ignores: [...(config.ignores ?? []), "tsup.config.ts"],
+  }));
