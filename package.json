@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "module": "dist/index.mjs",
+  "files": ["dist"],
   "scripts": {
     "build": "npm run ts-validate && tsup && npm run ts-emit",
     "lint": "npx eslint . -c eslint.config.mjs",

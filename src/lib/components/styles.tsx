@@ -4,6 +4,7 @@ import { useHelpConfig } from "../hooks";
 import {
   HELP_ACTIVE_SCOPE_ROOT_ATTRIBUTE,
   HELP_BUTTON_STYLES_CLASS_NAME,
+  HELP_ITEM_BAD_KEY_ATTRIBUTE,
   HELP_ITEM_STYLES_CLASS_NAME,
   HELP_OVERLAY_ENABLED_ATTRIBUTE,
   HELP_OVERLAY_STYLES_CLASS_NAME,
@@ -31,8 +32,21 @@ type StyleParams = Required<
 const makeStyles = ({ helpRootContainerId, helpItemClassName }: StyleParams) => css`
   #${helpRootContainerId}[${HELP_OVERLAY_ENABLED_ATTRIBUTE}="true"] {
     position: relative;
-  }
 
+    &[${HELP_ACTIVE_SCOPE_ROOT_ATTRIBUTE}="true"],
+    & [${HELP_ACTIVE_SCOPE_ROOT_ATTRIBUTE}="true"] {
+      & .${helpItemClassName} {
+        position: relative;
+      }
+    }
+  }
+`;
+
+const makeOptionalStyles = ({
+  helpRootContainerId,
+  helpItemClassName,
+  highlightElementsWithBadKeys,
+}: StyleParams) => css`
   #${helpRootContainerId}[${HELP_OVERLAY_ENABLED_ATTRIBUTE}="true"] {
     &[${HELP_ACTIVE_SCOPE_ROOT_ATTRIBUTE}="true"],
     & [${HELP_ACTIVE_SCOPE_ROOT_ATTRIBUTE}="true"] {
@@ -62,6 +76,30 @@ const makeStyles = ({ helpRootContainerId, helpItemClassName }: StyleParams) => 
           border-color: rgba(90, 178, 255, 1);
         }
       }
+
+      ${!highlightElementsWithBadKeys
+        ? ""
+        : css`
+            & [${HELP_ITEM_BAD_KEY_ATTRIBUTE}] {
+              box-shadow: 0 0 5px rgba(48, 48, 48, 0.6);
+              cursor: not-allowed !important;
+              position: relative;
+              opacity: 1;
+              pointer-events: none;
+              &::after {
+                content: " ";
+                background-color: rgba(255, 98, 94, 0.33);
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: var(${HELP_STYLES_PSEUDO_ELEMENT_CSS_VAR_NAME});
+                cursor: not-allowed !important;
+                pointer-events: auto !important;
+              }
+            }
+          `}
     }
   }
 `;
@@ -70,6 +108,9 @@ const makeStyles = ({ helpRootContainerId, helpItemClassName }: StyleParams) => 
 
 const stylesInserted = new Set();
 
+/**
+ * Handles injecting the required styles and optional built-in styles for the help overlay.
+ */
 export function HelpStyles() {
   const {
     helpRootContainerId,
@@ -78,9 +119,11 @@ export function HelpStyles() {
     helpItemClassName,
     helpOverlayClassName,
     highlightElementsWithBadKeys,
+    disableBuiltInStyles,
   } = useHelpConfig();
 
   useInsertionEffect(() => {
+    // Build params with defaults
     const params: StyleParams = {
       helpRootContainerId,
       helpButtonId,
@@ -90,7 +133,10 @@ export function HelpStyles() {
       highlightElementsWithBadKeys: !!highlightElementsWithBadKeys,
     };
 
-    const styles = makeStyles(params);
+    let styles = makeStyles(params);
+    if (!disableBuiltInStyles) {
+      styles += makeOptionalStyles(params);
+    }
     if (stylesInserted.has(styles)) {
       return;
     }
@@ -110,6 +156,7 @@ export function HelpStyles() {
     helpItemClassName,
     helpOverlayClassName,
     highlightElementsWithBadKeys,
+    disableBuiltInStyles,
   ]);
 
   return null;

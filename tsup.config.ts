@@ -8,4 +8,6 @@ export default defineConfig({
   tsconfig: "./tsconfig.json",
   minify: "terser",
   format: ["cjs", "esm"],
+  external: ["react"],
+  treeshake: true,
 });

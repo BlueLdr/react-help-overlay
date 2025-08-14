@@ -21,13 +21,21 @@ import type {
 //================================================
 
 export type HelpProviderProps = {
-  data: HelpData;
-  initialState: HelpStoredState | null;
-  onUpdateState: (newData: HelpStoredState) => void;
   children: React.ReactNode;
+  /** Data for all the help items in the application */
+  data: HelpData;
+  /** Initial stored state for the current user (loaded from database, localStorage, etc.) */
+  initialState: HelpStoredState | null;
+  /** Callback to store updated state (to database, localStorage, etc.) */
+  onUpdateState: (newData: HelpStoredState) => void;
+  /** Custom configuration options to use for the help system */
   config?: Partial<HelpConfig>;
 };
 
+/**
+ * Main logic/state provider for the help system; should be placed at the root of the app with your
+ * other context providers.
+ */
 export function HelpProvider({
   data,
   initialState,
@@ -40,13 +48,13 @@ export function HelpProvider({
   const [activeItem, setActiveItem] = useState<ActiveHelpItem | null>(null);
   const [helpOverlayActive, setHelpOverlayActive] = useState<boolean>(false);
   const [elementScopeRoot, setElementScopeRoot] = useState<Map<string, HTMLElement>>(
-    () => new Map(),
+    () => new Map()
   );
   const [tutorialsDisabled, setTutorialsDisabled] = useState(
-    initialState?.tutorialsDisabled ?? false,
+    initialState?.tutorialsDisabled ?? false
   );
   const [tutorialCompletionState, setTutorialCompletionState] = useState(
-    initialState?.tutorialCompletionState ?? {},
+    initialState?.tutorialCompletionState ?? {}
   );
 
   const completionStateRef = useValueRef(tutorialCompletionState);
@@ -55,6 +63,7 @@ export function HelpProvider({
   const elementScopeRootRef = useValueRef(elementScopeRoot);
 
   useEffect(() => {
+    // Invoke update function whenever stored state changes
     onUpdateState(
       tutorialCompletionState === initialState?.tutorialCompletionState &&
         tutorialsDisabled === initialState?.tutorialsDisabled
@@ -62,10 +71,11 @@ export function HelpProvider({
         : {
             tutorialsDisabled,
             tutorialCompletionState,
-          },
+          }
     );
   }, [tutorialCompletionState, tutorialsDisabled, onUpdateState, initialState]);
 
+  // Whenever external state changes, update internal state to match
   useChangeEffect(newValue => {
     setTutorialsDisabled(newValue?.tutorialsDisabled ?? false);
     setTutorialCompletionState(newValue?.tutorialCompletionState ?? {});
@@ -77,20 +87,22 @@ export function HelpProvider({
         setTutorialCompletionState(prevState => ({ ...prevState, [key]: true }));
       }
     },
-    [completionStateRef, dataRef],
+    [completionStateRef, dataRef]
   );
 
   const openHelpItem = useCallback<HelpActions["openHelpItem"]>(
     (key, asTutorial?: boolean) => {
       if (!key) {
+        // if no key provided, clear the active item
         setActiveItem(null);
       } else if (overlayEnabledRef.current) {
+        // if the overlay is open, set the active item without `isOpenedAsTutorial`
         setActiveItem({ key });
       } else {
         setActiveItem({ key, isOpenedAsTutorial: asTutorial });
       }
     },
-    [overlayEnabledRef],
+    [overlayEnabledRef]
   );
 
   const setHelpElementScope = useCallback<HelpActions["setHelpElementScope"]>(
@@ -111,11 +123,12 @@ export function HelpProvider({
         return newMap;
       });
     },
-    [elementScopeRootRef],
+    [elementScopeRootRef]
   );
 
   const baseZIndex = config.baseZIndex;
   const scopeRoot = useMemo<HelpScopeRoot>(() => {
+    // get id, element and zIndex for each scope root element in the stored map
     const values = Array.from(elementScopeRoot.entries()).map(([id, element]) => ({
       id,
       element,
@@ -123,12 +136,13 @@ export function HelpProvider({
     }));
     return values.reduce(
       (max, item) => {
+        // find the most-recently-opened item with the highest zIndex
         if (item.zIndex >= max.zIndex) {
           return item;
         }
         return max;
       },
-      { element: null, zIndex: baseZIndex } as HelpScopeRoot,
+      { element: null, zIndex: baseZIndex, id: "" } as HelpScopeRoot
     );
   }, [baseZIndex, elementScopeRoot]);
 
@@ -140,7 +154,7 @@ export function HelpProvider({
       helpOverlayActive,
       scopeRoot,
     }),
-    [tutorialCompletionState, tutorialsDisabled, activeItem, helpOverlayActive, scopeRoot],
+    [tutorialCompletionState, tutorialsDisabled, activeItem, helpOverlayActive, scopeRoot]
   );
 
   const actions = useMemo<HelpActions>(
@@ -151,7 +165,7 @@ export function HelpProvider({
       setHelpOverlayActive: setHelpOverlayActive,
       setHelpElementScope,
     }),
-    [markItemComplete, openHelpItem, setHelpElementScope],
+    [markItemComplete, openHelpItem, setHelpElementScope]
   );
 
   return (

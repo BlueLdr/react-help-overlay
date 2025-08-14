@@ -7,7 +7,6 @@
     "sourceMap": true,
     "declaration": true,
     "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "module": "esnext",
     "importHelpers": true,

@@ -1,3 +1,4 @@
+/** Joins an array of potential classNames into a properly formatted className string */
 export const joinClassNames = (...classNames: (string | undefined | null | false)[]) =>
   classNames.reduce<string | undefined>((result, str) => {
     if (!str) {

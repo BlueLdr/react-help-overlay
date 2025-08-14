@@ -10,6 +10,7 @@ import { useHelpActions, useHelpConfig, useHelpState } from "./useHelpContext";
 
 //================================================
 
+/** Get the button props for the Help Button (styles/classes, id, and click listener) */
 export const useHelpButton = () => {
   const { helpButtonId, helpButtonClassName, disableBuiltInStyles } = useHelpConfig();
   const { helpOverlayActive, scopeRoot } = useHelpState();
@@ -19,7 +20,7 @@ export const useHelpButton = () => {
 
   const onClick = useCallback(
     () => setHelpOverlayActive(!activeRef.current),
-    [activeRef, setHelpOverlayActive],
+    [activeRef, setHelpOverlayActive]
   );
 
   const scopeZIndex = scopeRoot.zIndex;
@@ -29,12 +30,12 @@ export const useHelpButton = () => {
         id: helpButtonId,
         className: joinClassNames(
           !disableBuiltInStyles && HELP_BUTTON_STYLES_CLASS_NAME,
-          helpButtonClassName,
+          helpButtonClassName
         ),
         style: { zIndex: scopeZIndex + HELP_BUTTON_Z_INDEX_OFFSET },
         onClick,
       }) satisfies React.ComponentProps<"button">,
-    [helpButtonId, disableBuiltInStyles, helpButtonClassName, scopeZIndex, onClick],
+    [helpButtonId, disableBuiltInStyles, helpButtonClassName, scopeZIndex, onClick]
   );
 
   return [buttonProps, helpOverlayActive] as const;

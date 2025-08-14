@@ -5,6 +5,7 @@ import { useHelpActions, useHelpData, useHelpState } from "./useHelpContext";
 
 //================================================
 
+/** Handles marking the current active item as complete if it's a tutorial item */
 export const useHelpMarkAsComplete = () => {
   const { activeItem } = useHelpState();
   const { markItemComplete } = useHelpActions();
@@ -14,7 +15,7 @@ export const useHelpMarkAsComplete = () => {
 
   useEffect(() => {
     if (activeItem && itemsRef.current[activeItem.key]?.isTutorial) {
-      markItemComplete(activeItem.key)
+      markItemComplete(activeItem.key);
     }
   }, [activeItem, itemsRef, markItemComplete]);
-}
+};
