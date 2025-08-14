@@ -4,8 +4,9 @@ import type { HelpItemKey } from "../types";
 
 //================================================
 
+/** Get the help item key and tutorial flag for the given HTMLElement */
 export const getHelpItemDataFromElement = (
-  elem: HTMLElement,
+  elem: HTMLElement
 ): [HelpItemKey, boolean] | [undefined, undefined] => {
   let keyValue = elem.getAttribute(HELP_ITEM_KEY_ATTRIBUTE);
   let isTutorialValue = elem.getAttribute(HELP_ITEM_IS_TUTORIAL_ATTRIBUTE);

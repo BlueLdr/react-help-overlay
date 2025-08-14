@@ -5,13 +5,18 @@ import type { HelpContentRenderProps, HelpItemData } from "../types";
 //================================================
 
 export interface HelpActiveContent extends Omit<HelpItemData, "content"> {
+  /** Content to render inside the help popup */
   content: React.ReactNode;
+  /** True if the help popup was opened as a tutorial, False if it was opened via the help overlay */
   isOpenedAsTutorial?: boolean;
+  /** If currently viewing the intro sequence, this is the index of the current item in the sequence */
   introIndex?: number;
 }
 
+/** Gets the content (and relevant state) to display in the help modal for the currently active help item */
+/** @param renderProps Props to pass to the content renderer (usually `callbacks` returned by `useHelpModal`) */
 export const useHelpActiveContent = (
-  renderProps: HelpContentRenderProps,
+  renderProps: HelpContentRenderProps
 ): HelpActiveContent | null => {
   const { activeItem } = useHelpState();
   const { items, introSequence } = useHelpData();
@@ -21,6 +26,7 @@ export const useHelpActiveContent = (
     return null;
   }
 
+  // get the data for the active help item (or for the not-found item, if `notFoundKey` is set)
   const item = items[activeItem.key] || (notFoundKey ? items[notFoundKey] : undefined);
 
   if (!item) {

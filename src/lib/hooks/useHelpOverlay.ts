@@ -22,12 +22,13 @@ const silenceEvent = (e: Event) => {
   e.stopPropagation();
 };
 
+/**
+ * Returns attributes to pass to the root wrapper, and styles (both required and optional) for the help overlay,
+ * Also handles enabling/disabling click listeners for help items when the overlay is toggled
+ */
 export const useHelpOverlay = (
-  customStyles?: HelpOverlayRenderProps,
-): [
-  rootAttrs: Record<string, string>,
-  overlayStyles: HelpOverlayRenderProps,
-] => {
+  customStyles?: HelpOverlayRenderProps
+): [rootAttrs: Record<string, string>, overlayStyles: HelpOverlayRenderProps] => {
   const { helpOverlayActive, activeItem, scopeRoot } = useHelpState();
   const { setHelpOverlayActive, openHelpItem } = useHelpActions();
   const { disableBuiltInStyles, helpOverlayClassName } = useHelpConfig();
@@ -37,11 +38,13 @@ export const useHelpOverlay = (
 
   // "Escape" key listener to close overlay when it's active
   useEffect(() => {
+    // don't set listeners if the overlay is not active
     if (!helpOverlayActive) {
       return;
     }
 
     const listener = (e: KeyboardEvent) => {
+      // close overlay when Escape is pressed
       if (e.key === "Escape") {
         e.preventDefault();
         e.stopPropagation();
@@ -57,7 +60,7 @@ export const useHelpOverlay = (
 
   /** Handler for clicking on an item when "Help" mode is active */
   const onClickItem = useCallback<EventListener>(
-    (event) => {
+    event => {
       // if another help item is active, abort
       if (
         activeItemRef.current ||
@@ -73,13 +76,15 @@ export const useHelpOverlay = (
         return;
       }
 
+      // Open the help modal and disable the overlay
       openHelpItem(key);
       setHelpOverlayActive(false);
     },
-    [activeItemRef, overlayEnabledRef, openHelpItem, setHelpOverlayActive],
+    [activeItemRef, overlayEnabledRef, openHelpItem, setHelpOverlayActive]
   );
 
   useEffect(() => {
+    // don't set listeners if the overlay is not active
     if (!helpOverlayActive) {
       return;
     }
@@ -102,6 +107,7 @@ export const useHelpOverlay = (
     if (helpOverlayActive) {
       attrs[HELP_OVERLAY_ENABLED_ATTRIBUTE] = "true";
     }
+    // if no scope root element is set, then the root wrapper is the scope root element
     if (!scopeRoot.element) {
       attrs[HELP_ACTIVE_SCOPE_ROOT_ATTRIBUTE] = "true";
     }
@@ -113,7 +119,7 @@ export const useHelpOverlay = (
         className: joinClassNames(
           !disableBuiltInStyles && HELP_OVERLAY_STYLES_CLASS_NAME,
           helpOverlayClassName,
-          customStyles?.className,
+          customStyles?.className
         ),
       } satisfies HelpOverlayRenderProps,
     ];

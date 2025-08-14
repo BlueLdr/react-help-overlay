@@ -8,7 +8,7 @@ export interface MarkItemCompleteAction {
 
 export interface OpenHelpItemAction {
   (key: HelpItemKey, asTutorial?: boolean): void;
-
+  // if key is null, the active help item will be cleared
   (key: null): void;
 }
 

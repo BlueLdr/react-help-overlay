@@ -24,6 +24,12 @@ export interface HelpConfig {
   /** Item to show if the active key has no entry in the HelpData */
   notFoundKey?: HelpItemKey;
 
+  /** Disables all optional built-in styles for the help overlay/items. This includes:
+   * - Border on hover
+   * - Box shadow
+   * - Cursor
+   * - Pointer events
+   */
   disableBuiltInStyles?: boolean;
 
   /** For debugging */
