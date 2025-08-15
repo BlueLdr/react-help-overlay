@@ -5,7 +5,6 @@ import {
   HELP_ITEM_IS_TUTORIAL_ATTRIBUTE,
   HELP_ITEM_KEY_ATTRIBUTE,
   HELP_ITEM_STYLES_CLASS_NAME,
-  HELP_ITEM_Z_INDEX_OFFSET,
   joinClassNames,
 } from "../utils";
 import { useHelpConfig, useHelpData, useHelpState } from "./useHelpContext";
@@ -19,18 +18,18 @@ import type { HelpItemKey } from "../types";
 export const useHelpItemAttributes = <K extends HelpItemKey = HelpItemKey>(key: K) => {
   const { items } = useHelpData();
   const { tutorialsDisabled } = useHelpState();
-  const { helpItemClassName, disableBuiltInStyles } = useHelpConfig();
+  const { helpItemClassName, disableBuiltInStyles, zIndexOverrides } = useHelpConfig();
 
   const item = items[key];
 
-  const style = useHelpScopeZIndex(HELP_ITEM_Z_INDEX_OFFSET);
+  const style = useHelpScopeZIndex(zIndexOverrides.item);
 
   return useMemo(() => {
     const returnValue: Record<`data-${string}`, string> &
       Pick<React.HTMLProps<HTMLElement>, "style" | "className"> = {
       className: joinClassNames(
         !disableBuiltInStyles && HELP_ITEM_STYLES_CLASS_NAME,
-        helpItemClassName,
+        helpItemClassName
       ),
       style,
     };

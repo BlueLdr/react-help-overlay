@@ -29,8 +29,8 @@ type StyleParams = Required<
   >
 >;
 
-const makeStyles = ({ helpRootContainerId, helpItemClassName }: StyleParams) => css`
-  #${helpRootContainerId}[${HELP_OVERLAY_ENABLED_ATTRIBUTE}="true"] {
+const makeStyles = ({ helpItemClassName }: StyleParams) => css`
+  body[${HELP_OVERLAY_ENABLED_ATTRIBUTE}="true"] {
     position: relative;
 
     &[${HELP_ACTIVE_SCOPE_ROOT_ATTRIBUTE}="true"],
@@ -43,11 +43,10 @@ const makeStyles = ({ helpRootContainerId, helpItemClassName }: StyleParams) => 
 `;
 
 const makeOptionalStyles = ({
-  helpRootContainerId,
   helpItemClassName,
   highlightElementsWithBadKeys,
 }: StyleParams) => css`
-  #${helpRootContainerId}[${HELP_OVERLAY_ENABLED_ATTRIBUTE}="true"] {
+  body[${HELP_OVERLAY_ENABLED_ATTRIBUTE}="true"] {
     &[${HELP_ACTIVE_SCOPE_ROOT_ATTRIBUTE}="true"],
     & [${HELP_ACTIVE_SCOPE_ROOT_ATTRIBUTE}="true"] {
       & .${helpItemClassName} {

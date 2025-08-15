@@ -1,11 +1,11 @@
 export interface HelpItemData<Key extends string = string> {
   /** Unique key for this help item */
   key: Key;
-  /** Title to display in the help modal */
+  /** Title to display in the help popup */
   name: string;
   /** If true, the help item will pop up the first time the user interacts with this element */
   isTutorial?: boolean;
-  /** Content to render inside the help modal */
+  /** Content to render inside the help popup */
   content: string | ((props: HelpContentRenderProps) => React.ReactNode);
 }
 

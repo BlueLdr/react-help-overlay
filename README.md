@@ -23,7 +23,7 @@ The entire system is built around hooks. There are only two components from the 
 
 Technically only `<HelpProvider>` is required. The `<HelpOverlay>` can be implemented manually using the hooks available in the library, if you need further customization.
 
-As this library is headless, you will need to implement the components for rendering the help button and popup. This is made very simple by using the `useHelpButton` and `useHelpModal` hooks.
+As this library is headless, you will need to implement the components for rendering the help button and popup. This is made very simple by using the `useHelpButton` and `useHelpPopup` hooks.
 
 `HelpButton.tsx`
 
@@ -43,27 +43,27 @@ export const HelpButton = () => {
 }
 ```
 
-`HelpModal.tsx`
+`HelpPopup.tsx`
 ```tsx
-import { useHelpModal, useHelpActiveContent } from "react-help-overlay";
-import { Modal } from "your-ui-library";
+import { useHelpPopup, useHelpActiveContent } from "react-help-overlay";
+import { Popup } from "your-ui-library";
 
-export const HelpModal = () => {
-  const [isOpen, attrs, callbacks] = useHelpModal();
+export const HelpPopup = () => {
+  const [isOpen, attrs, callbacks] = useHelpPopup();
   const activeContent = useHelpActiveContent(callbacks);
   
   return (
-    <Modal 
-      id="help-modal"
+    <Popup 
+      id="help-popup"
       // make sure these attrs are passed to the root element of the popup window
       // and not the backdrop, to ensure correct the z-indexes are set
       dialogElementProps={attrs}
       open={isOpen}
-      closeModal={callbacks.closeModal}
+      closePopup={callbacks.closePopup}
       titleText={activeContent.name}
     >
       {activeContent.content}
-    </Modal>
+    </Popup>
   )
 }
 ```
@@ -133,8 +133,8 @@ declare module "react-help-overlay" {
 ### Rendering layers
 
 ```
-          Help modal
----------------------------- help modal backdrop ----
+          Help popup
+---------------------------- help popup backdrop ----
    Highlighted help elements (when overlay is active)
           Help button
 ---------------------------- help overlay backdrop (when overlay is active) ----

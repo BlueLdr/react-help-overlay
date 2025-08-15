@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo } from "react";
 import {
   HELP_OVERLAY_ENABLED_ATTRIBUTE,
   getHelpItemDataFromElement,
-  HELP_OVERLAY_Z_INDEX_OFFSET,
   joinClassNames,
   HELP_OVERLAY_STYLES_CLASS_NAME,
   HELP_ACTIVE_SCOPE_ROOT_ATTRIBUTE,
@@ -31,7 +30,7 @@ export const useHelpOverlay = (
 ): [rootAttrs: Record<string, string>, overlayStyles: HelpOverlayRenderProps] => {
   const { helpOverlayActive, activeItem, scopeRoot } = useHelpState();
   const { setHelpOverlayActive, openHelpItem } = useHelpActions();
-  const { disableBuiltInStyles, helpOverlayClassName } = useHelpConfig();
+  const { disableBuiltInStyles, helpOverlayClassName, zIndexOverrides } = useHelpConfig();
 
   const activeItemRef = useValueRef(activeItem);
   const overlayEnabledRef = useValueRef(helpOverlayActive);
@@ -53,7 +52,9 @@ export const useHelpOverlay = (
     };
 
     window.addEventListener("keydown", listener);
+    document.body.setAttribute(HELP_OVERLAY_ENABLED_ATTRIBUTE, "true");
     return () => {
+      document.body.setAttribute(HELP_OVERLAY_ENABLED_ATTRIBUTE, "false");
       window.removeEventListener("keydown", listener);
     };
   }, [helpOverlayActive, setHelpOverlayActive]);
@@ -76,7 +77,7 @@ export const useHelpOverlay = (
         return;
       }
 
-      // Open the help modal and disable the overlay
+      // Open the help popup and disable the overlay
       openHelpItem(key);
       setHelpOverlayActive(false);
     },
@@ -100,13 +101,10 @@ export const useHelpOverlay = (
     };
   }, [helpOverlayActive, onClickItem]);
 
-  const style = useHelpScopeZIndex(HELP_OVERLAY_Z_INDEX_OFFSET);
+  const style = useHelpScopeZIndex(zIndexOverrides.overlay);
 
   return useMemo(() => {
     const attrs: Record<string, string> = {};
-    if (helpOverlayActive) {
-      attrs[HELP_OVERLAY_ENABLED_ATTRIBUTE] = "true";
-    }
     // if no scope root element is set, then the root wrapper is the scope root element
     if (!scopeRoot.element) {
       attrs[HELP_ACTIVE_SCOPE_ROOT_ATTRIBUTE] = "true";
@@ -127,7 +125,6 @@ export const useHelpOverlay = (
     customStyles?.className,
     customStyles?.style,
     disableBuiltInStyles,
-    helpOverlayActive,
     helpOverlayClassName,
     scopeRoot.element,
     style,

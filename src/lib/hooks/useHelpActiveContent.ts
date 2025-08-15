@@ -13,8 +13,8 @@ export interface HelpActiveContent extends Omit<HelpItemData, "content"> {
   introIndex?: number;
 }
 
-/** Gets the content (and relevant state) to display in the help modal for the currently active help item */
-/** @param renderProps Props to pass to the content renderer (usually `callbacks` returned by `useHelpModal`) */
+/** Gets the content (and relevant state) to display in the help popup for the currently active help item */
+/** @param renderProps Props to pass to the content renderer (usually `callbacks` returned by `useHelpPopup`) */
 export const useHelpActiveContent = (
   renderProps: HelpContentRenderProps
 ): HelpActiveContent | null => {
