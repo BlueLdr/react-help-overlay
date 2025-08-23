@@ -2,9 +2,17 @@ import type { HelpItemKey } from "./data";
 
 //================================================
 
+export interface HelpConfigZIndexOverrides {
+  base: number;
+  overlay: number;
+  button: number;
+  item: number;
+  popup: number;
+}
+
 export interface HelpConfig {
-  /** The zIndex that should be used for the help overlay/modal/button when no scope element is set */
-  baseZIndex: number;
+  /** The zIndex that should be used for the help overlay/popup/button when no scope element is set */
+  zIndexOverrides: HelpConfigZIndexOverrides;
 
   /** HTML id to assign to the button that activates the help overlay */
   helpButtonId: string;

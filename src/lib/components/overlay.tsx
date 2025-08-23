@@ -1,3 +1,5 @@
+import { createPortal } from "react-dom";
+
 import { useHelpConfig, useHelpState } from "../hooks";
 import { useHelpOverlay } from "../hooks/useHelpOverlay";
 
@@ -29,13 +31,18 @@ export function HelpOverlay({
   style,
   ...props
 }: HelpOverlayProps) {
-  const { helpOverlayActive } = useHelpState();
+  const { helpOverlayActive, scopeRoot } = useHelpState();
   const { helpRootContainerId } = useHelpConfig();
   const [attrs, styles] = useHelpOverlay({ className, style });
 
+  let overlay = renderOverlay(helpOverlayActive, styles);
+  if (scopeRoot.element) {
+    overlay = createPortal(overlay, scopeRoot.element, scopeRoot.id);
+  }
+
   return (
     <div {...props} {...attrs} id={helpRootContainerId}>
-      {renderOverlay(helpOverlayActive, styles)}
+      {overlay}
       {children}
     </div>
   );

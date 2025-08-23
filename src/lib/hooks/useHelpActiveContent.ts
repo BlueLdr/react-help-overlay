@@ -1,3 +1,6 @@
+import { useMemo } from "react";
+
+import { useValueRef } from "../utils/hooks";
 import { useHelpConfig, useHelpData, useHelpState } from "./useHelpContext";
 
 import type { HelpContentRenderProps, HelpItemData } from "../types";
@@ -13,8 +16,8 @@ export interface HelpActiveContent extends Omit<HelpItemData, "content"> {
   introIndex?: number;
 }
 
-/** Gets the content (and relevant state) to display in the help modal for the currently active help item */
-/** @param renderProps Props to pass to the content renderer (usually `callbacks` returned by `useHelpModal`) */
+/** Gets the content (and relevant state) to display in the help popup for the currently active help item */
+/** @param renderProps Props to pass to the content renderer (usually `callbacks` returned by `useHelpPopup`) */
 export const useHelpActiveContent = (
   renderProps: HelpContentRenderProps
 ): HelpActiveContent | null => {
@@ -22,23 +25,26 @@ export const useHelpActiveContent = (
   const { items, introSequence } = useHelpData();
   const { notFoundKey } = useHelpConfig();
 
-  if (!activeItem) {
-    return null;
-  }
+  const renderPropsRef = useValueRef(renderProps);
 
-  // get the data for the active help item (or for the not-found item, if `notFoundKey` is set)
-  const item = items[activeItem.key] || (notFoundKey ? items[notFoundKey] : undefined);
+  return useMemo(() => {
+    if (!activeItem) {
+      return null;
+    }
 
-  if (!item) {
-    return null;
-  }
+    // get the data for the active help item (or for the not-found item, if `notFoundKey` is set)
+    const item = items[activeItem.key] || (notFoundKey ? items[notFoundKey] : undefined);
+    const introIndex = item && introSequence ? introSequence.indexOf(item.key) : -1;
 
-  const introIndex = introSequence?.indexOf(item.key) ?? -1;
-
-  return {
-    ...item,
-    isOpenedAsTutorial: activeItem.isOpenedAsTutorial,
-    content: typeof item.content === "string" ? item.content : item.content(renderProps),
-    introIndex: introIndex > -1 ? introIndex : undefined,
-  };
+    if (!item) {
+      return null;
+    }
+    return {
+      ...item,
+      isOpenedAsTutorial: activeItem.isOpenedAsTutorial,
+      content:
+        typeof item.content === "string" ? item.content : item.content(renderPropsRef.current),
+      introIndex: introIndex > -1 ? introIndex : undefined,
+    };
+  }, [activeItem, introSequence, items, notFoundKey, renderPropsRef]);
 };

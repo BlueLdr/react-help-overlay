@@ -3,7 +3,7 @@ export * from "./useHelpButton";
 export * from "./useHelpContext";
 export * from "./useHelpItemAttributes";
 export * from "./useHelpMarkAsComplete";
-export * from "./useHelpModal";
+export * from "./useHelpPopup";
 export * from "./useHelpOverlay";
 export * from "./useHelpScope";
 export * from "./useHelpScopeZIndex";
