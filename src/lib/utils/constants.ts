@@ -9,7 +9,7 @@ export const HELP_BASE_Z_INDEX = 10000;
 export const HELP_OVERLAY_Z_INDEX_OFFSET = 0;
 export const HELP_BUTTON_Z_INDEX_OFFSET = 5;
 export const HELP_ITEM_Z_INDEX_OFFSET = 10;
-export const HELP_MODAL_Z_INDEX_OFFSET = 20;
+export const HELP_POPUP_Z_INDEX_OFFSET = 20;
 
 export const HELP_BUTTON_STYLES_CLASS_NAME = "help-button";
 export const HELP_ITEM_STYLES_CLASS_NAME = "help-item";

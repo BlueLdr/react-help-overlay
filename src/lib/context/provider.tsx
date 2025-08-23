@@ -12,6 +12,7 @@ import type {
   ActiveHelpItem,
   HelpActions,
   HelpConfig,
+  HelpConfigZIndexOverrides,
   HelpData,
   HelpScopeRoot,
   HelpState,
@@ -29,7 +30,9 @@ export type HelpProviderProps = {
   /** Callback to store updated state (to database, localStorage, etc.) */
   onUpdateState: (newData: HelpStoredState) => void;
   /** Custom configuration options to use for the help system */
-  config?: Partial<HelpConfig>;
+  config?: Partial<
+    Omit<HelpConfig, "zIndexOverrides"> & { zIndexOverrides: Partial<HelpConfigZIndexOverrides> }
+  >;
 };
 
 /**
@@ -43,7 +46,14 @@ export function HelpProvider({
   config: customConfig,
   children,
 }: HelpProviderProps) {
-  const config = useMemo(() => ({ ...defaultHelpConfig, ...customConfig }), [customConfig]);
+  const config = useMemo(
+    () => ({
+      ...defaultHelpConfig,
+      ...customConfig,
+      zIndexOverrides: { ...defaultHelpConfig.zIndexOverrides, ...customConfig?.zIndexOverrides },
+    }),
+    [customConfig]
+  );
 
   const [activeItem, setActiveItem] = useState<ActiveHelpItem | null>(null);
   const [helpOverlayActive, setHelpOverlayActive] = useState<boolean>(false);
@@ -126,7 +136,7 @@ export function HelpProvider({
     [elementScopeRootRef]
   );
 
-  const baseZIndex = config.baseZIndex;
+  const baseZIndex = config.zIndexOverrides.base;
   const scopeRoot = useMemo<HelpScopeRoot>(() => {
     // get id, element and zIndex for each scope root element in the stored map
     const values = Array.from(elementScopeRoot.entries()).map(([id, element]) => ({

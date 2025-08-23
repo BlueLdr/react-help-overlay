@@ -1,34 +1,34 @@
 import { useCallback, useMemo, useState } from "react";
 
-import { HELP_MODAL_Z_INDEX_OFFSET } from "../utils";
 import { useValueRef } from "../utils/hooks";
-import { useHelpActions, useHelpData, useHelpState } from "./useHelpContext";
+import { useHelpActions, useHelpConfig, useHelpData, useHelpState } from "./useHelpContext";
 import { useHelpScopeZIndex } from "./useHelpScopeZIndex";
 
 import type { ActiveHelpItem, HelpItemKey } from "../types";
 
 //================================================
 
-export type UseHelpModalCallbacks = {
+export type UseHelpPopupCallbacks = {
   /**
-   * Navigates the help modal to the given help item;
+   * Navigates the help popup to the given help item;
    * For use inside help entries to "link" to other help entries
    */
   goToHelpPage: (key: HelpItemKey | null) => void;
   /** Returns to the previous help item; If there is no history to go back to, this will be undefined */
   goBack?: () => void;
-  closeModal: () => void;
+  closePopup: () => void;
 };
 
-/** Handles the state and zIndex of the help modal */
-export const useHelpModal = (): [
+/** Handles the state and zIndex of the help popup */
+export const useHelpPopup = (): [
   open: boolean,
   attrs: Pick<React.HTMLProps<HTMLElement>, "style">,
-  callbacks: UseHelpModalCallbacks,
+  callbacks: UseHelpPopupCallbacks,
 ] => {
   const { openHelpItem } = useHelpActions();
   const { activeItem } = useHelpState();
   const { items } = useHelpData();
+  const { zIndexOverrides } = useHelpConfig();
   const itemsRef = useValueRef(items);
 
   const [history, setHistory] = useState<ActiveHelpItem[]>([]);
@@ -36,7 +36,7 @@ export const useHelpModal = (): [
 
   const activeItemRef = useValueRef(activeItem);
 
-  const closeModal = useCallback(() => {
+  const closePopup = useCallback(() => {
     setHistory([]);
     return openHelpItem(null);
   }, [openHelpItem]);
@@ -44,7 +44,7 @@ export const useHelpModal = (): [
   const goToHelpPage = useCallback(
     (key: HelpItemKey | null) => {
       if (key === null) {
-        return closeModal();
+        return closePopup();
       }
       // if the new item is valid and a current item is being viewed, push the current item onto the
       // history stack
@@ -58,7 +58,7 @@ export const useHelpModal = (): [
       // opened by the user
       return openHelpItem(key, false);
     },
-    [activeItemRef, itemsRef, openHelpItem, closeModal]
+    [activeItemRef, itemsRef, openHelpItem, closePopup]
   );
 
   const goBack = useCallback(() => {
@@ -68,25 +68,25 @@ export const useHelpModal = (): [
     while (prevItem && !itemsRef.current[prevItem.key] && newHistory.length > 0) {
       prevItem = newHistory.pop();
     }
-    // if no valid item is found, close the modal
+    // if no valid item is found, close the popup
     if (!prevItem || !itemsRef.current[prevItem.key]) {
-      return closeModal();
+      return closePopup();
     }
     setHistory(newHistory);
     // navigate to the previous item and restore its `isOpenedAsTutorial` state
     return openHelpItem(prevItem.key, prevItem.isOpenedAsTutorial);
-  }, [historyRef, itemsRef, openHelpItem, closeModal]);
+  }, [historyRef, itemsRef, openHelpItem, closePopup]);
 
   const callbacks = useMemo(
     () => ({
       goToHelpPage,
       goBack: historyRef.current.length > 0 ? goBack : undefined,
-      closeModal,
+      closePopup,
     }),
-    [goBack, goToHelpPage, closeModal, historyRef]
+    [goBack, goToHelpPage, closePopup, historyRef]
   );
 
-  const style = useHelpScopeZIndex(HELP_MODAL_Z_INDEX_OFFSET);
+  const style = useHelpScopeZIndex(zIndexOverrides.popup);
   const attrs = useMemo<Pick<React.HTMLProps<HTMLElement>, "style">>(() => ({ style }), [style]);
 
   return [!!activeItem, attrs, callbacks];
