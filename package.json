@@ -1,6 +1,6 @@
 {
   "name": "react-help-overlay",
-  "version": "0.1.0-beta",
+  "version": "0.1.0-beta2",
   "description": "A headless library for building interactive help and tutorials into your React app.",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
